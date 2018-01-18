@@ -304,6 +304,29 @@ describe('client test', function () {
       }).to.throwException(/"event" must be String or Buffer/);
     });
 
+     it('createFunction with invalid runtime should fail', async function() {
+      expect(() => { client.createFunction(serviceName, {
+        functionName: "test_invalid_runtime_function",
+        description: 'function desc',
+        memorySize: 128,
+        handler: 'main.handler',
+        runtime: 10,
+        timeout: 10,
+        code: {
+          zipFile: fs.readFileSync(path.join(__dirname, 'figures/test.zip'), 'base64')
+        }
+      });
+      }).to.throwException("runtime type must be string");
+    });
+
+    it('updateFunction with invalid runtime should fail', async function() {
+      expect(() => { client.updateFunction(serviceName, functionName, {
+        description: 'updated function desc',
+        runtime: 10
+      });
+      }).to.throwException("runtime type must be string");
+    });
+
     it('deleteFunction should ok', async function() {
       await client.deleteFunction(serviceName, functionName);
       // No exception, no failed
